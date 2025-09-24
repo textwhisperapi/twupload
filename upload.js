@@ -2,8 +2,17 @@ async function upload() {
   const file = document.getElementById("fileInput").files[0];
   if (!file) return alert("Pick a file");
 
-  const uploadUrl = "https://r2-worker.textwhisper.workers.dev/?name=" + encodeURIComponent(file.name);
-  const publicUrl = "https://pub-1afc23a510c147a5a857168f23ff6db8.r2.dev/" + encodeURIComponent(file.name);
+  // Try to get username from session-injected JS or fallback to input
+  const username = window.currentUsername || document.getElementById("usernameInput").value.trim();
+  const surrogateId = window.currentSurrogate || document.getElementById("surrogateInput").value.trim();
+
+  if (!username || !surrogateId) {
+    return alert("Username and surrogate ID are required.");
+  }
+
+  const key = `${username}/surrogate-${surrogateId}/files/${file.name}`;
+  const uploadUrl = "https://r2-worker.textwhisper.workers.dev/?key=" + encodeURIComponent(key);
+  const publicUrl = "https://pub-1afc23a510c147a5a857168f23ff6db8.r2.dev/" + encodeURIComponent(key);
 
   const xhr = new XMLHttpRequest();
   xhr.open("POST", uploadUrl, true);
