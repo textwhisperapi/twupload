@@ -93,3 +93,27 @@ async function listFiles() {
   }
 }
 
+async function deleteFile(key) {
+  if (!key) return alert("No file key specified");
+
+  if (!confirm(`Delete ${key}?`)) return;
+
+  try {
+    const resp = await fetch(
+      `https://r2-worker.textwhisper.workers.dev/?key=${encodeURIComponent(key)}`,
+      { method: "DELETE" }
+    );
+
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new Error(text || `HTTP ${resp.status}`);
+    }
+
+    alert(`✅ Deleted ${key}`);
+    listFiles(); // refresh after delete
+  } catch (err) {
+    console.error("Delete failed:", err);
+    alert("❌ Failed to delete file: " + err.message);
+  }
+}
+
