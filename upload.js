@@ -14,6 +14,7 @@ async function upload() {
   const uploadUrl = "https://r2-worker.textwhisper.workers.dev/?key=" + encodeURIComponent(key);
   const publicUrl = "https://pub-1afc23a510c147a5a857168f23ff6db8.r2.dev/" + encodeURIComponent(key);
 
+  
   const xhr = new XMLHttpRequest();
   xhr.open("POST", uploadUrl, true);
   xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
