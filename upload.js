@@ -62,3 +62,34 @@ async function upload() {
 
   xhr.send(file);
 }
+
+async function listFiles() {
+  const username = window.currentUsername || document.getElementById("usernameInput").value.trim();
+  const surrogateId = window.currentSurrogate || document.getElementById("surrogateInput").value.trim();
+
+  if (!username || !surrogateId) {
+    return alert("Username and surrogate ID are required.");
+  }
+
+  const prefix = `${username}/surrogate-${surrogateId}/files/`;
+  const resp = await fetch(`https://r2-worker.textwhisper.workers.dev/list?prefix=${encodeURIComponent(prefix)}`);
+  const data = await resp.json();
+
+  const list = document.getElementById("fileList");
+  list.innerHTML = "";
+
+  if (Array.isArray(data)) {
+    data.forEach(obj => {
+      const li = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = `https://pub-1afc23a510c147a5a857168f23ff6db8.r2.dev/${encodeURIComponent(obj.key)}`;
+      link.textContent = obj.key.split("/").pop();
+      link.target = "_blank";
+      li.appendChild(link);
+      list.appendChild(li);
+    });
+  } else {
+    list.innerHTML = "<li>No files found or error loading list.</li>";
+  }
+}
+
